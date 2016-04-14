@@ -19,8 +19,12 @@ import com.hexade.borntoparty.main.UI.Activities.ItemListActivity;
 import com.hexade.borntoparty.main.UI.Activities.MainActivity;
 import com.hexade.borntoparty.main.R;
 import com.hexade.borntoparty.main.Utils.DataManager;
+import com.hexade.borntoparty.main.models.BornToPartyUser;
 import com.hexade.borntoparty.main.models.Users;
 import com.squareup.picasso.Picasso;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 /**
  * A fragment representing a single Item detail screen.
@@ -38,7 +42,7 @@ public class BirthdayDetailFragment extends Fragment {
     /**
      * The dummy content this fragment is presenting.
      */
-    private Users.User mItem;
+    private BornToPartyUser mItem;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -55,14 +59,23 @@ public class BirthdayDetailFragment extends Fragment {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = Users.getUserMap().get(getArguments().getString(ARG_ITEM_ID));
+            String username = getArguments().getString(ARG_ITEM_ID);
 
-            Activity activity = this.getActivity();
+            ArrayList<BornToPartyUser> friendsList = MainActivity.myFriends.getFriendsList();
+            for(BornToPartyUser f : friendsList){
+                if(f.getUsername().equals(username)){
+                    mItem = f;
+                    break;
+                }
+            }
+
+
+                    Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
 //                appBarLayout.setTitle(mItem.content);
                 ImageView backdrop = (ImageView)appBarLayout.findViewById(R.id.main_backdrop);
-                Picasso.with(getActivity()).load(mItem.getLargePicture()).skipMemoryCache().into(backdrop);
+                Picasso.with(getActivity()).load(mItem.getPicture().getLarge()).skipMemoryCache().into(backdrop);
             }
         }
     }
@@ -74,7 +87,7 @@ public class BirthdayDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.item_detail)).setText(mItem.getFullName());
+            ((TextView) rootView.findViewById(R.id.item_detail)).setText(mItem.getName().getFullName());
             ((TextView) rootView.findViewById(R.id.item_date)).setText(mItem.getFormattedDob());
             ((TextView) rootView.findViewById(R.id.daysandage)).setText("Turns " + (mItem.getAge()+1) + " in "  + mItem.getDaysLeft() + " days!");
             ((TextView) rootView.findViewById(R.id.phone)).setText(mItem.getPhone()+"\n"+mItem.getCell()+"\n"+mItem.getEmail());

@@ -74,17 +74,26 @@
             android:windowSoftInputMode="adjustResize|stateVisible" />
         <activity
             android:name=".UI.Activities.RegisterAccountActivity"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
 
-        <service
-            android:name=".kinvey.BornToPartyAuthenticationService">
+        <service android:name=".kinvey.BornToPartyAuthenticationService">
             <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator"/>
+                <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
+
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
+
+        <activity
+            android:name=".UI.Activities.AddFriendActivity"
+            android:label="@string/title_activity_add_friend"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".UI.Activities.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -14,12 +14,23 @@ import android.view.ViewGroup;
 import com.hexade.borntoparty.main.DividerItemDecoration;
 import com.hexade.borntoparty.main.MyBirthdayRecyclerViewAdapter;
 import com.hexade.borntoparty.main.R;
+import com.hexade.borntoparty.main.UI.Activities.MainActivity;
+import com.hexade.borntoparty.main.models.BornToPartyUser;
+import com.hexade.borntoparty.main.models.Friends;
 import com.hexade.borntoparty.main.models.Users;
+import com.kinvey.android.AsyncAppData;
+import com.kinvey.android.AsyncUser;
+import com.kinvey.android.Client;
+import com.kinvey.android.callback.KinveyListCallback;
+import com.kinvey.java.Query;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * A fragment representing a list of Items.
@@ -79,7 +90,7 @@ public class BirthdayFragment extends Fragment {
             recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
             Log.i("API", "In BirthdayFragment, onCreateView");
 
-            final Users users = new Users();
+            /*final Users users = new Users();
             users.fetch(Users.URL, new Callback() {
                 @Override
                 public void onFailure(Request request, IOException e) {
@@ -105,6 +116,71 @@ public class BirthdayFragment extends Fragment {
                         // Request not successful
                         Log.i("API - ERROR", responseString);
                     }
+                }
+            });*/
+
+            final Client mKinveyClient = MainActivity.kinveyClient;
+
+            final BornToPartyUser friends = new BornToPartyUser();
+            Query myQuery = mKinveyClient.query();
+
+            myQuery.equals("username", "crazysnake682");//MainActivity.loggedInUser.getUsername());
+            final AsyncAppData<Friends> myFriends = mKinveyClient.appData("friends", Friends.class);
+            myFriends.get(myQuery, new KinveyListCallback<Friends>() {
+                @Override
+                public void onSuccess(Friends[] results) {
+                    Log.v("TAG", "received " + results.length + " friends");
+
+                    if(results.length > 0){
+                        Log.i("RESULT",results[0].getUsername());
+                        Log.i("RESULT",results[0].getFriends().toString());
+                        Log.i("RESULT",results[0].getFriends().size() + "");
+
+                        Query query = new Query();
+                        query.in("username", results[0].getFriends().toArray());//MainActivity.loggedInUser.getUsername());
+                        AsyncAppData<BornToPartyUser> myFriendList = mKinveyClient.appData("usersmaster", BornToPartyUser.class);
+                        myFriendList.get(query, new KinveyListCallback<BornToPartyUser>() {
+                            @Override
+                            public void onSuccess(BornToPartyUser[] results) {
+                                Log.v("TAG", "received " + results.length + " friends");
+
+                                if (results.length > 0) {
+                                    Log.i("RESULT", " friends list " + results.length);
+                                    Log.i("RESULT", " friends list " + results[0].getUsername());
+
+                                    Friends myFriends = new Friends();
+
+                                    MainActivity.myFriends = myFriends;
+
+                                    AsyncUser user = mKinveyClient.user();
+                                    myFriends.setUsername(user.getUsername());
+
+                                    ArrayList<BornToPartyUser> friendList = new ArrayList<>(Arrays.asList(results));
+                                    for(BornToPartyUser f : friendList){
+                                        f.setDob(f.getDob());
+                                    }
+
+                                    if(friendList.size()!=0){
+                                        Collections.sort(friendList, BornToPartyUser.getComparator());
+                                    }
+
+                                    myFriends.setFriendsList(friendList);
+
+                                    recyclerView.setAdapter(new MyBirthdayRecyclerViewAdapter(getActivity(), friendList, mListener));
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Throwable error) {
+                                Log.e("TAG", "failed to fetchByFilterCriteria 2", error);
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable error) {
+                    Log.e("TAG", "failed to fetchByFilterCriteria 1", error);
                 }
             });
 
@@ -143,6 +219,6 @@ public class BirthdayFragment extends Fragment {
      */
     public interface OnBirthdayListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onBirthdayListFragmentInteraction(Users.User item);
+        void onBirthdayListFragmentInteraction(BornToPartyUser item);
     }
 }

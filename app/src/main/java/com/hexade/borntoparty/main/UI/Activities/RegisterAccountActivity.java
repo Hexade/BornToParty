@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,13 +15,17 @@ import com.hexade.borntoparty.main.UI.Fragments.DatePickerFragment;
 import com.hexade.borntoparty.main.R;
 import com.hexade.borntoparty.main.kinvey.ClientService;
 import com.hexade.borntoparty.main.models.BornToPartyUser;
+import com.kinvey.android.AsyncAppData;
 import com.kinvey.android.AsyncUser;
 import com.kinvey.android.Client;
 import com.kinvey.java.User;
 import com.kinvey.java.core.KinveyCancellableCallback;
+import com.kinvey.java.core.KinveyClientCallback;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class RegisterAccountActivity extends FragmentActivity
                                     implements DatePickerFragment.OnDatePickerSetListener {
@@ -89,13 +94,59 @@ public class RegisterAccountActivity extends FragmentActivity
                     @Override
                     public void onSuccess(User user) {
                         AsyncUser asyncUser = RegisterAccountActivity.this.kinveyClient.user();
-                        asyncUser.put(BornToPartyUser.KEY_FIRST_NAME, mFirstNameET.getText().toString().trim());
-                        asyncUser.put(BornToPartyUser.KEY_LAST_NAME, mLastNameET.getText().toString().trim());
-                        asyncUser.put(BornToPartyUser.KEY_DOB, mDateOfBirthTV.getText().toString());
-                        asyncUser.put(BornToPartyUser.KEY_EMAIL, mEmailET.getText().toString().trim());
+//                        asyncUser.put(BornToPartyUser.KEY_FIRST_NAME, mFirstNameET.getText().toString().trim());
+//                        asyncUser.put(BornToPartyUser.KEY_LAST_NAME, mLastNameET.getText().toString().trim());
+//                        asyncUser.put(BornToPartyUser.KEY_DOB, mDateOfBirthTV.getText().toString());
+//                        asyncUser.put(BornToPartyUser.KEY_EMAIL, mEmailET.getText().toString().trim());
+
+                        BornToPartyUser btpUser = new BornToPartyUser();
+
+                        BornToPartyUser.Name btpName = btpUser.getName();
+                        btpUser.setId(asyncUser.getId());
+
+                        btpUser.setUsername(asyncUser.getUsername());
+                        btpName.setFirst(mFirstNameET.getText().toString().trim());
+                        btpName.setLast(mLastNameET.getText().toString().trim());
+                        btpUser.setName(btpName);
+
+                        btpUser.setDob(mLastNameET.getText().toString().trim());
+                        btpUser.setEmail(mEmailET.getText().toString().trim());
+
+                        btpUser.setCell("05-343-596");
+                        btpUser.setPhone("049-677-04-77");
+
+                        BornToPartyUser.Picture btpPic = btpUser.getPicture();
+                        btpPic.setLarge("https://randomuser.me/api/portraits/men/39.jpg");
+                        btpPic.setThumbnail("https://randomuser.me/api/portraits/med/men/39.jpg");
+                        btpPic.setMedium("https://randomuser.me/api/portraits/thumb/men/39.jpg");
+
+                        btpUser.setPicture(btpPic);
+
+                        AsyncAppData<BornToPartyUser> myevents = kinveyClient.appData("usersmaster", BornToPartyUser.class);
+                        myevents.save(btpUser, new KinveyClientCallback<BornToPartyUser>() {
+                            @Override
+                            public void onFailure(Throwable e) {
+                                Log.e("TAG", "failed to save event data", e);
+
+                                showErrorRegistrationFailed(e.getMessage());
+                            }
+                            @Override
+                            public void onSuccess(BornToPartyUser r) {
+                                Log.d("TAG", "saved data for entity "+ r.getUsername());
+
+                                // Todo Add row in friends
+
+                                String info = "Registration successful: Please login to continue";
+                                Toast.makeText(getApplicationContext(), info, Toast.LENGTH_LONG).show();
+
+                                Intent intent = new Intent(RegisterAccountActivity.this, LoginActivity.class);
+                                RegisterAccountActivity.this.startActivity(intent);
+                                RegisterAccountActivity.this.finish();
+                            }
+                        });
 
                         // update non unique fields for created user
-                        asyncUser.update(new KinveyCancellableCallback<User>() {
+                        /*asyncUser.update(new KinveyCancellableCallback<User>() {
                             @Override
                             public boolean isCancelled() {
                                 return false;
@@ -120,7 +171,7 @@ public class RegisterAccountActivity extends FragmentActivity
                             public void onFailure(Throwable throwable) {
                                 showErrorRegistrationFailed(throwable.getMessage());
                             }
-                        });
+                        });*/
                     }
 
                     @Override

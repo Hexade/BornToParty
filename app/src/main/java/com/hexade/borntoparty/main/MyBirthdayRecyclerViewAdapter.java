@@ -10,23 +10,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hexade.borntoparty.main.UI.Fragments.BirthdayFragment.OnBirthdayListFragmentInteractionListener;
+import com.hexade.borntoparty.main.models.BornToPartyUser;
 import com.hexade.borntoparty.main.models.Users;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link Users.User} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link BornToPartyUser} and makes a call to the
  * specified {@link OnBirthdayListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class MyBirthdayRecyclerViewAdapter extends RecyclerView.Adapter<MyBirthdayRecyclerViewAdapter.ViewHolder> {
 
-    private final List<Users.User> mValues;
+    private final List<BornToPartyUser> mValues;
     private final OnBirthdayListFragmentInteractionListener mListener;
     private final Context mContext;
 
-    public MyBirthdayRecyclerViewAdapter(Context context, List<Users.User> items, OnBirthdayListFragmentInteractionListener listener) {
+    public MyBirthdayRecyclerViewAdapter(Context context, List<BornToPartyUser> items, OnBirthdayListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
         mContext = context;
@@ -44,9 +45,9 @@ public class MyBirthdayRecyclerViewAdapter extends RecyclerView.Adapter<MyBirthd
         holder.mItem = mValues.get(position);
 //        holder.mIdView.setText(mValues.get(position).id);
 
-        Picasso.with(mContext).load(mValues.get(position).getThumbnail()).skipMemoryCache().into(holder.mThumbnail);
+        Picasso.with(mContext).load(mValues.get(position).getPicture().getThumbnail()).skipMemoryCache().into(holder.mThumbnail);
 
-        holder.mUsernameView.setText(mValues.get(position).getFullName());
+        holder.mUsernameView.setText(mValues.get(position).getName().getFullName());
         holder.mBirthdayView.setText(mValues.get(position).getFormattedDob());
         holder.mDaysLeftView.setText(mValues.get(position).getDaysLeft()+ " days");
         holder.mNewAgeView.setText("Turns " + (mValues.get(position).getAge() + 1));
@@ -80,7 +81,7 @@ public class MyBirthdayRecyclerViewAdapter extends RecyclerView.Adapter<MyBirthd
         public final TextView mDaysLeftView;
         public final TextView mNewAgeView;
 
-        public Users.User mItem;
+        public BornToPartyUser mItem;
 
         public ViewHolder(View view) {
             super(view);

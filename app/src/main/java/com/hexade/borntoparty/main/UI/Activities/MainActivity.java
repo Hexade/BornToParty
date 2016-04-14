@@ -8,6 +8,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -28,6 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.hexade.borntoparty.main.R;
 import com.hexade.borntoparty.main.UI.Fragments.BirthdayDetailFragment;
 import com.hexade.borntoparty.main.UI.Fragments.BirthdayFragment;
@@ -38,7 +40,7 @@ import com.hexade.borntoparty.main.dummy.DummyContent;
 import com.hexade.borntoparty.main.dummy.DummyEvent;
 import com.hexade.borntoparty.main.kinvey.ClientService;
 import com.hexade.borntoparty.main.models.BornToPartyUser;
-import com.hexade.borntoparty.main.models.Users;
+import com.hexade.borntoparty.main.models.Friends;
 import com.kinvey.android.AsyncUser;
 import com.kinvey.android.Client;
 
@@ -58,10 +60,13 @@ public class MainActivity extends AppCompatActivity
 
     public static Context myAppContext;
 
-    private Client kinveyClient;
+    public static Client kinveyClient;
 
     // UI references
     private NavigationView navigationView;
+
+    public static BornToPartyUser loggedInUser;
+    public static Friends myFriends;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -123,9 +128,20 @@ public class MainActivity extends AppCompatActivity
         if (isUserInfoSet)
             return;
 
+        if(loggedInUser == null){
+            SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
+            Gson gson = new Gson();
+            String json = mPrefs.getString("loggedInUser", "");
+            BornToPartyUser obj = gson.fromJson(json, BornToPartyUser.class);
+            loggedInUser = obj;
+        }
+
         AsyncUser user = kinveyClient.user();
-        String firstName = (String) user.get(BornToPartyUser.KEY_FIRST_NAME);
-        String lastName = (String) user.get(BornToPartyUser.KEY_LAST_NAME);
+//        String firstName = (String) user.get(BornToPartyUser.KEY_FIRST_NAME);
+//        String lastName = (String) user.get(BornToPartyUser.KEY_LAST_NAME););
+
+        String firstName = loggedInUser.getName().getFirst();
+        String lastName = loggedInUser.getName().getLast();
 
         View headerView = navigationView.getHeaderView(0);
 
@@ -177,6 +193,8 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_add) {
             // open a modal to enter the username to add new Friend;
+            Intent intent = new Intent(this, AddFriendActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -240,7 +258,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onBirthdayListFragmentInteraction(Users.User item) {
+    public void onBirthdayListFragmentInteraction(BornToPartyUser item) {
         if (mTwoPane) {
             Bundle arguments = new Bundle();
             arguments.putString(BirthdayDetailFragment.ARG_ITEM_ID, item.getUsername());
@@ -317,6 +335,10 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    public static void setLoggedInUser(BornToPartyUser loggedInUser){
+        MainActivity.loggedInUser = loggedInUser;
+    }
+
     public void logOut() {
         /*
          * TODO: Log out is not an essentaial feature. Can be removed later
@@ -324,6 +346,15 @@ public class MainActivity extends AppCompatActivity
          * Need a better implementation to push this feature to production
          */
         kinveyClient.user().logout().execute();
+
+        SharedPreferences mPrefs = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+//        Gson gson = new Gson();
+//        String json = gson.toJson(MyObject);
+        prefsEditor.putString("loggedInUser", "");
+        prefsEditor.commit();
+
+        loggedInUser = null;
 
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
