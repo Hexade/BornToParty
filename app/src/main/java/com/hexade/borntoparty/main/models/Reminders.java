@@ -15,22 +15,4 @@ import java.util.Set;
  */
 public class Reminders {
 
-    private ArrayList<Users.User> reminderList = new ArrayList<>();
-
-    public Reminders(){
-
-    }
-
-    public ArrayList<Users.User> fetchReminders(Context context, Users user){
-
-        Set<String> reminderNames = new DataManager(context).getReminders();
-        Log.i("REMINDERS","is Reminder empty" + (reminderNames != null ? reminderNames.size() : "Empty"));
-        for(String username : reminderNames){
-            reminderList.add(user.getUserMap().get(username));
-        }
-
-        Collections.sort(reminderList, user.getComparator());
-
-        return reminderList;
-    }
 }

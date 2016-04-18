@@ -4,9 +4,11 @@ import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 
 import android.accounts.AccountManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
@@ -52,6 +54,9 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         mPasswordET= (EditText) findViewById(R.id.et_password);
         mSignInBtn = (Button) findViewById(R.id.btn_sign_in);
         mRegisterBtn = (Button) findViewById(R.id.btn_register);
+
+        mUsernameET.setText("crazysnake682");
+        mPasswordET.setText("btp");
 
         kinveyClient = ((ClientService) getApplication()).getKinveyService();
 
@@ -113,12 +118,13 @@ public class LoginActivity extends AccountAuthenticatorActivity {
                                 }
 
                                 MainActivity.setLoggedInUser(result);
-                                SharedPreferences mPrefs = getPreferences(MODE_PRIVATE);
+//                                SharedPreferences mPrefs = getSharedPreferences("btpPref", Context.MODE_PRIVATE);
+                                SharedPreferences  mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
                                 SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                                Gson gson = new Gson();
-                                String json = gson.toJson(result);
-                                prefsEditor.putString("loggedInUser", json);
+//                                Gson gson = new Gson();
+//                                String json = gson.toJson(result);
+                                prefsEditor.putString("loggedInUser", result.getUsername());
                                 prefsEditor.commit();
 
 

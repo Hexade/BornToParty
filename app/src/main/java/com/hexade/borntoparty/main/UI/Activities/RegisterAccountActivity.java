@@ -109,7 +109,7 @@ public class RegisterAccountActivity extends FragmentActivity
                         btpName.setLast(mLastNameET.getText().toString().trim());
                         btpUser.setName(btpName);
 
-                        btpUser.setDob(mLastNameET.getText().toString().trim());
+                        btpUser.setDob(mDateOfBirthTV.getText().toString());
                         btpUser.setEmail(mEmailET.getText().toString().trim());
 
                         btpUser.setCell("05-343-596");
@@ -227,7 +227,7 @@ public class RegisterAccountActivity extends FragmentActivity
     public void OnDatePickerSet(int year, int month, int day) {
         Calendar c = Calendar.getInstance();
         c.set(year, month, day);
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy");
         mDateOfBirthTV.setText(sdf.format(c.getTime()));
     }
 }

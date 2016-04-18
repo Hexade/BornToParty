@@ -8,20 +8,23 @@ import android.widget.TextView;
 
 import com.hexade.borntoparty.main.UI.Fragments.EventsFragment.OnEventsListFragmentInteractionListener;
 import com.hexade.borntoparty.main.dummy.DummyEvent.DummyItem;
+import com.hexade.borntoparty.main.models.Event;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link Event} and makes a call to the
  * specified {@link OnEventsListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class MyEventsRecyclerViewAdapter extends RecyclerView.Adapter<MyEventsRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<Event> mValues;
     private final OnEventsListFragmentInteractionListener mListener;
 
-    public MyEventsRecyclerViewAdapter(List<DummyItem> items, OnEventsListFragmentInteractionListener listener) {
+    public MyEventsRecyclerViewAdapter(List<Event> items, OnEventsListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -35,9 +38,31 @@ public class MyEventsRecyclerViewAdapter extends RecyclerView.Adapter<MyEventsRe
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-//        holder.mItem = mValues.get(position);
-//        holder.mIdView.setText(mValues.get(position).id);
-//        holder.mContentView.setText(mValues.get(position).content);
+        holder.mItem = mValues.get(position);
+        holder.mIdView.setText(mValues.get(position).getForUser());
+        holder.mContentView.setText(mValues.get(position).getEventName());
+
+        holder.location.setText(mValues.get(position).getLocation());
+
+        HashMap<String,Integer> inviteCount = new HashMap<>();
+        HashMap<String, String> inviteStatus = mValues.get(position).getInviteStatus();
+
+        for(Map.Entry<String, String> entry : inviteStatus.entrySet()){
+
+            String value = entry.getValue();
+            Integer count = inviteCount.get(value);
+            if (count == null)
+                inviteCount.put(value, new Integer(1));
+            else
+                inviteCount.put(value, new Integer(count+1));
+        }
+
+        String countString = "";
+        for(Map.Entry<String, Integer> e : inviteCount.entrySet()){
+            countString+= e.getKey() + ": " + e.getValue() + "\n";
+        }
+
+        holder.friends_count.setText(countString);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,20 +78,25 @@ public class MyEventsRecyclerViewAdapter extends RecyclerView.Adapter<MyEventsRe
 
     @Override
     public int getItemCount() {
-        return mValues.size()/5;
+        return mValues.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public DummyItem mItem;
+        public final TextView location;
+        public final TextView friends_count;
+
+        public Event mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.id);
             mContentView = (TextView) view.findViewById(R.id.content);
+            location = (TextView) view.findViewById(R.id.location);
+            friends_count = (TextView) view.findViewById(R.id.friends_count);
         }
 
         @Override

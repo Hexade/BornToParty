@@ -6,14 +6,35 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.google.api.client.json.GenericJson;
+import com.hexade.borntoparty.main.MyBirthdayRecyclerViewAdapter;
 import com.hexade.borntoparty.main.MyEventsRecyclerViewAdapter;
 import com.hexade.borntoparty.main.R;
+import com.hexade.borntoparty.main.UI.Activities.MainActivity;
 import com.hexade.borntoparty.main.dummy.DummyEvent;
 import com.hexade.borntoparty.main.dummy.DummyEvent.DummyItem;
+import com.hexade.borntoparty.main.models.BornToPartyUser;
+import com.hexade.borntoparty.main.models.Event;
+import com.hexade.borntoparty.main.models.EventUsers;
+import com.hexade.borntoparty.main.models.Friends;
+import com.hexade.borntoparty.main.models.Store;
+import com.kinvey.android.AsyncAppData;
+import com.kinvey.android.AsyncCustomEndpoints;
+import com.kinvey.android.AsyncUser;
+import com.kinvey.android.Client;
+import com.kinvey.android.callback.KinveyListCallback;
+import com.kinvey.java.Query;
+import com.kinvey.java.core.KinveyClientCallback;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * A fragment representing a list of Items.
@@ -28,6 +49,8 @@ public class EventsFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnEventsListFragmentInteractionListener mListener;
+
+    final Client mKinveyClient = MainActivity.kinveyClient;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -63,7 +86,7 @@ public class EventsFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+            final RecyclerView recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
@@ -71,7 +94,32 @@ public class EventsFragment extends Fragment {
             }
 
             //recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-            recyclerView.setAdapter(new MyEventsRecyclerViewAdapter(DummyEvent.ITEMS, mListener));
+//            recyclerView.setAdapter(new MyEventsRecyclerViewAdapter(DummyEvent.ITEMS, mListener));
+
+            Query myQuery = mKinveyClient.query();
+
+            myQuery.equals("username", MainActivity.loggedInUser.getUsername());//MainActivity.loggedInUser.getUsername());
+            final AsyncAppData<EventUsers> myFriends = mKinveyClient.appData("eventusers", EventUsers.class);
+            myFriends.get(myQuery, new KinveyListCallback<EventUsers>() {
+                @Override
+                public void onSuccess(EventUsers[] results) {
+                    Log.v("TAG", "received " + results.length + " friends");
+
+                    if(results.length > 0){
+                        Log.i("RESULT",results[0].getUsername());
+                        Log.i("RESULT",results[0].getEvents().toString());
+                        ArrayList<Event> eventList = results[0].getEvents();
+                        Store.eventList = eventList;
+
+                        recyclerView.setAdapter(new MyEventsRecyclerViewAdapter(eventList, mListener));
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable error) {
+                    Log.e("TAG", "failed to fetchByFilterCriteria 1", error);
+                }
+            });
         }
         return view;
     }
@@ -106,6 +154,6 @@ public class EventsFragment extends Fragment {
      */
     public interface OnEventsListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onEventsListFragmentInteraction(DummyItem item);
+        void onEventsListFragmentInteraction(Event item);
     }
 }

@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -30,6 +31,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.hexade.borntoparty.main.R;
 import com.hexade.borntoparty.main.UI.Fragments.BirthdayDetailFragment;
 import com.hexade.borntoparty.main.UI.Fragments.BirthdayFragment;
@@ -40,7 +42,9 @@ import com.hexade.borntoparty.main.dummy.DummyContent;
 import com.hexade.borntoparty.main.dummy.DummyEvent;
 import com.hexade.borntoparty.main.kinvey.ClientService;
 import com.hexade.borntoparty.main.models.BornToPartyUser;
+import com.hexade.borntoparty.main.models.Event;
 import com.hexade.borntoparty.main.models.Friends;
+import com.hexade.borntoparty.main.models.Users;
 import com.kinvey.android.AsyncUser;
 import com.kinvey.android.Client;
 
@@ -49,7 +53,8 @@ public class MainActivity extends AppCompatActivity
         BirthdayFragment.OnBirthdayListFragmentInteractionListener,
         EventsFragment.OnEventsListFragmentInteractionListener,
         InviteFragment.OnInviteListFragmentInteractionListener,
-        HomeFragment.OnFragmentInteractionListener{
+        HomeFragment.OnFragmentInteractionListener,
+        Users.UserCallback{
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -88,6 +93,62 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
+        if(loggedInUser == null)
+            setUserInfo();
+        else
+            setupMainActivity();
+    }
+
+    // set username and full name in nav header;
+    private void setUserInfo() {
+        if (isUserInfoSet)
+            return;
+
+        if(loggedInUser == null){
+//            SharedPreferences  mPrefs = getSharedPreferences("btpPref", Context.MODE_PRIVATE);
+
+            SharedPreferences  mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+            String username = mPrefs.getString("loggedInUser", "");
+//            BornToPartyUser obj = new Gson().fromJson(json, BornToPartyUser.class);
+//            loggedInUser = obj;
+            Users.getUserData(username, this);
+            return;
+        }
+
+        setupMainActivity();
+
+        AsyncUser user = kinveyClient.user();
+//        String firstName = (String) user.get(BornToPartyUser.KEY_FIRST_NAME);
+//        String lastName = (String) user.get(BornToPartyUser.KEY_LAST_NAME););
+
+        String firstName = loggedInUser.getName().getFirst();
+        String lastName = loggedInUser.getName().getLast();
+
+        View headerView = navigationView.getHeaderView(0);
+
+        if (firstName != null && lastName !=null) {
+            String userFullName = firstName.toString() + " " + lastName.toString();
+            TextView fullNameTV = (TextView) headerView.findViewById(R.id.tv_nav_header_full_name);
+            fullNameTV.setText(userFullName);
+            isUserInfoSet = true;
+        }
+
+        if (user.getUsername() != null) {
+            String username = "@" + user.getUsername();
+            TextView usernameTV = (TextView) headerView.findViewById(R.id.tv_nav_header_username);
+            usernameTV.setText(username);
+        }
+    }
+
+    private boolean isLoggedIn() {
+        AccountManager am = AccountManager.get(getApplicationContext());
+        Account[] accounts = am.getAccountsByType(ClientService.ACCOUNT_TYPE);
+
+        return accounts.length > 0 && kinveyClient.user().isUserLoggedIn();
+    }
+
+    public void setupMainActivity(){
         myAppContext = getApplicationContext();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -123,49 +184,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    // set username and full name in nav header;
-    private void setUserInfo() {
-        if (isUserInfoSet)
-            return;
-
-        if(loggedInUser == null){
-            SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
-            Gson gson = new Gson();
-            String json = mPrefs.getString("loggedInUser", "");
-            BornToPartyUser obj = gson.fromJson(json, BornToPartyUser.class);
-            loggedInUser = obj;
-        }
-
-        AsyncUser user = kinveyClient.user();
-//        String firstName = (String) user.get(BornToPartyUser.KEY_FIRST_NAME);
-//        String lastName = (String) user.get(BornToPartyUser.KEY_LAST_NAME););
-
-        String firstName = loggedInUser.getName().getFirst();
-        String lastName = loggedInUser.getName().getLast();
-
-        View headerView = navigationView.getHeaderView(0);
-
-        if (firstName != null && lastName !=null) {
-            String userFullName = firstName.toString() + " " + lastName.toString();
-            TextView fullNameTV = (TextView) headerView.findViewById(R.id.tv_nav_header_full_name);
-            fullNameTV.setText(userFullName);
-            isUserInfoSet = true;
-        }
-
-        if (user.getUsername() != null) {
-            String username = "@" + user.getUsername();
-            TextView usernameTV = (TextView) headerView.findViewById(R.id.tv_nav_header_username);
-            usernameTV.setText(username);
-        }
-    }
-
-    private boolean isLoggedIn() {
-        AccountManager am = AccountManager.get(getApplicationContext());
-        Account[] accounts = am.getAccountsByType(ClientService.ACCOUNT_TYPE);
-
-        return accounts.length > 0 && kinveyClient.user().isUserLoggedIn();
-    }
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -195,6 +213,9 @@ public class MainActivity extends AppCompatActivity
             // open a modal to enter the username to add new Friend;
             Intent intent = new Intent(this, AddFriendActivity.class);
             startActivity(intent);
+            return true;
+        } else if (id == R.id.action_logout) {
+            logOut();
             return true;
         }
 
@@ -278,7 +299,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onEventsListFragmentInteraction(DummyEvent.DummyItem item) {
+    public void onEventsListFragmentInteraction(Event item) {
         /*if (mTwoPane) {
             Bundle arguments = new Bundle();
             arguments.putString(ItemDetailFragment.ARG_ITEM_ID, item.id);
@@ -290,6 +311,7 @@ public class MainActivity extends AppCompatActivity
         } else {*/
             Context context = getApplicationContext();
             Intent intent = new Intent(context, EventDetailActivity.class);
+            intent.putExtra(BirthdayDetailFragment.ARG_ITEM_ID, item.get_id());
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
             context.startActivity(intent);
@@ -300,7 +322,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onInviteListFragmentInteraction(DummyContent.DummyItem item) {
         DialogFragment reminderDialogFragment = new DialogFragment() {
-            public String[] inviteActions =  new String[]{"Yes","No","May be","Later"};
+            public String[] inviteActions =  new String[]{"Coming","May be","Not Coming"};
 
             @Override
             public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -372,6 +394,12 @@ public class MainActivity extends AppCompatActivity
                 }
             }, null);
         */
+    }
+
+    @Override
+    public void getUserDataCompleted(BornToPartyUser user) {
+        loggedInUser = user;
+        setUserInfo();
     }
 
 /*    private void setupViewPager(ViewPager viewPager) {

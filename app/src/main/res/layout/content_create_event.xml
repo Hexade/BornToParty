@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Activities"
-                android:id="@+id/textView2"
+                android:id="@+id/event_activities_info"
                 android:layout_gravity="center_horizontal" />
             <Button
                 android:layout_width="fill_parent"
@@ -89,7 +89,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Create Event"
-        android:id="@+id/create_event"
+        android:id="@+id/btn_create_event"
         android:layout_gravity="center_horizontal"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"

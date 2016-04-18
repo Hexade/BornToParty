@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">BornToParty</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">BornToParty</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_add">Add</string>
 
-    <string name="title_birthday_detail">Birthday Detail</string>
+    <string name="title_birthday_detail">Birthday</string>
     <string name="title_item_list">Items</string>
     <string name="title_item_detail">Item Detail</string>
 
@@ -29,7 +29,7 @@
         <!--Aenean ullamcorper dolor non condimentum congue. Aenean mauris nunc, pellentesque at placerat vitae,-->
         <!--aliquet quis orci. Curabitur maximus augue ut bibendum sagittis.-->
     </string>
-    <string name="title_activity_create_event">CreateEventActivity</string>
+    <string name="title_activity_create_event">Plan Party</string>
     <string name="title_activity_event_detail">EventDetailActivity</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -37,4 +37,5 @@
     <string name="title_activity_register_account">RegisterAccount</string>
     <string name="borntoparty_account">BornToPartyAccount</string>
     <string name="title_activity_add_friend">Add Friend</string>
+    <string name="title_activity_discussion">Discussion</string>
 </resources>

@@ -109,6 +109,7 @@ public class BornToPartyUser extends GenericJson{
     }
 
     public void setDob(String da) {
+        this.dob = da;
         Date dob = new Date();
 
         SimpleDateFormat sdfmt1 = new SimpleDateFormat("MMM dd, yyyy");
@@ -238,7 +239,7 @@ public class BornToPartyUser extends GenericJson{
         }
 
         public String getFullName(){
-            return first + " " + last;
+            return first.substring(0, 1).toUpperCase() + first.substring(1) + " " + last.substring(0, 1).toUpperCase() + last.substring(1);
         }
     }
 

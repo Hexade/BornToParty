@@ -99,6 +99,7 @@ public class BirthdayDetailFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
+                    // TODO check if there is already a event created for this birthday
                     Intent intent = new Intent(getActivity(), CreateEventActivity.class);
                     intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, mItem.getUsername());
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

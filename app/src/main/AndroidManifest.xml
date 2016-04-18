@@ -30,6 +30,7 @@
         <activity
             android:name=".UI.Activities.BirthdayDetailActivity"
             android:label="@string/title_birthday_detail"
+            android:launchMode="singleTop"
             android:parentActivityName=".UI.Activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -54,15 +55,15 @@
             android:label="@string/title_activity_create_event"
             android:parentActivityName=".UI.Activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            2
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".UI.Activities.MainActivity" />
+                android:value=".UI.Activities.BirthdayDetailActivity" />
         </activity>
         <activity
             android:name=".UI.Activities.EventDetailActivity"
             android:label="@string/title_activity_event_detail"
             android:parentActivityName=".UI.Activities.MainActivity"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -93,6 +94,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".UI.Activities.MainActivity" />
+        </activity>
+        <activity
+            android:name=".UI.Activities.DiscussionActivity"
+            android:label="@string/title_activity_discussion"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".UI.Activities.EventDetailActivity" />
         </activity>
     </application>
 

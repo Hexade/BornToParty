@@ -3,7 +3,7 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="220dp"
+    android:layout_height="180dp"
     android:layout_marginRight="8dp"
     android:layout_marginLeft="8dp"
     android:layout_marginBottom="4dp"
@@ -35,26 +35,16 @@
                         android:textAppearance="?attr/textAppearanceListItem" />
 
                     <!-- TODO change id to - date -->
-                    <TextView
-                        android:id="@+id/content"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/text_margin"
-                        android:layout_marginLeft="@dimen/text_margin"
-                        android:layout_marginRight="@dimen/text_margin"
-                        android:text="Birthday"
-                        android:textAppearance="?attr/textAppearanceListItemSmall"
-                        android:layout_weight="30" />
 
                 </LinearLayout>
 
-            <ImageView
+            <!--<ImageView
                 android:id="@+id/avatar"
                 android:layout_width="150px"
                 android:layout_height="150px"
                 android:src="@drawable/material_flat"
                 android:gravity="right"
-                android:layout_weight="1"/>
+                android:layout_weight="1"/>-->
         </LinearLayout>
 
         <LinearLayout
@@ -78,12 +68,14 @@
                     android:textAppearance="?attr/textAppearanceListItemSmall" />
 
                 <TextView
-                    android:id="@+id/friends_count"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:id="@+id/content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/text_margin"
-                    android:textAppearance="?attr/textAppearanceListItemSmall"
-                    android:text="Coming : 10\nNot Coming : 5\nMay Be : 2" />
+                    android:layout_marginLeft="@dimen/text_margin"
+                    android:layout_marginRight="@dimen/text_margin"
+                    android:text="Birthday"
+                    android:textAppearance="?attr/textAppearanceListItemSmall" />
 
             </LinearLayout>
             <LinearLayout
@@ -92,7 +84,14 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1" >
 
-                <Button
+                <TextView
+                    android:id="@+id/friends_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/text_margin"
+                    android:textAppearance="?attr/textAppearanceListItemSmall"
+                    android:text="Coming : 10\nNot Coming : 5\nMay Be : 2" />
+                <!--<Button
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -105,7 +104,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="You haven't responded to this invitation yet! Click Here"
-                    android:id="@+id/btn_set_response"/>
+                    android:id="@+id/btn_set_response"/>-->
             </LinearLayout>
         </LinearLayout>
 
