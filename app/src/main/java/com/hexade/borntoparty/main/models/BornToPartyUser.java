@@ -215,7 +215,7 @@ public class BornToPartyUser extends GenericJson{
         }
 
         public String getFirst() {
-            return first;
+            return first.substring(0, 1).toUpperCase() + first.substring(1);
         }
 
         public void setFirst(String first) {
@@ -223,7 +223,7 @@ public class BornToPartyUser extends GenericJson{
         }
 
         public String getLast() {
-            return last;
+            return last.substring(0, 1).toUpperCase() + last.substring(1);
         }
 
         public void setLast(String last) {

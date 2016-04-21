@@ -14,44 +14,84 @@
     tools:context="com.hexade.borntoparty.main.UI.Activities.DiscussionActivity"
     tools:showIn="@layout/activity_discussion">
 
-<android.support.v7.widget.RecyclerView
-    android:id="@+id/lvChat"
-    android:transcriptMode="alwaysScroll"
-    android:layout_alignParentTop="true"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentRight="true"
-    android:layout_above="@+id/llSend"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent" />
-<RelativeLayout
-    android:id="@+id/llSend"
-    android:layout_alignParentBottom="true"
-    android:layout_width="match_parent"
-    android:paddingTop="5dp"
-    android:paddingBottom="10dp"
-    android:paddingLeft="0dp"
-    android:paddingRight="0dp"
-    android:layout_height="wrap_content" >
-    <EditText
-        android:id="@+id/etMessage"
-        android:layout_toLeftOf="@+id/btSend"
-        android:layout_alignBottom="@+id/btSend"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="top"
-        android:hint="Say anything!"
-        android:inputType="textShortMessage"
-        android:imeOptions="actionSend"
-        />
-    <Button
-        android:id="@+id/btSend"
+    <LinearLayout
+        android:id="@+id/header"
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical|right"
-        android:paddingRight="10dp"
+        android:gravity="center_horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Most Recent"
+            android:id="@+id/textView2"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/switch1"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:layout_alignParentTop="true"
+            android:layout_alignRight="@+id/lvChat"
+            android:layout_alignEnd="@+id/lvChat"
+            android:checked="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="TopLiked"
+            android:id="@+id/textView"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/lvChat"
+        android:transcriptMode="alwaysScroll"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:text="Send"
-        android:textSize="18sp" >
-    </Button>
-</RelativeLayout>
+        android:layout_above="@+id/llSend"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/header" />
+    <RelativeLayout
+        android:id="@+id/llSend"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:paddingTop="5dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:layout_height="wrap_content" >
+        <EditText
+            android:id="@+id/etMessage"
+            android:layout_toLeftOf="@+id/btSend"
+            android:layout_alignBottom="@+id/btSend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:hint="Say anything!"
+            android:inputType="textShortMessage"
+            android:imeOptions="actionSend"
+            />
+        <Button
+            android:id="@+id/btSend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|right"
+            android:paddingRight="10dp"
+            android:layout_alignParentRight="true"
+            android:text="Send"
+            android:textSize="18sp" >
+        </Button>
+    </RelativeLayout>
 </RelativeLayout>

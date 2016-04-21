@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hexade.borntoparty.main.R;
 import com.hexade.borntoparty.main.models.BornToPartyUser;
@@ -152,7 +153,7 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
                         for(int i = 0; i < lv.getCount(); i++)
                         {
                             if(lv.isItemChecked(i)){
-                                invitedList.put(myFriends.get(i).getUsername(), "invite sent");
+                                invitedList.put(myFriends.get(i).getUsername(), "Invite Sent");
                             } else {
                                 invitedList.remove(myFriends.get(i).getUsername());
                             }
@@ -224,7 +225,7 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
         pd.show();
 
         // validate !
-        invitedList.put(MainActivity.loggedInUser.getUsername(),"coming");
+        invitedList.put(MainActivity.loggedInUser.getUsername(),"Coming");
 
         newEvent = new Event();
         newEvent.setCreatedBy(MainActivity.loggedInUser.getUsername());
@@ -250,6 +251,8 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
                 Log.d("TAG", "saved data for entity "+ r.getEventName());
 
                 // show done display success and navigate back
+                Toast.makeText(getApplicationContext(), "Party Created. Have a blast!", Toast.LENGTH_LONG).show();
+
                 pd.dismiss();
                 finish();
             }
